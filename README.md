@@ -1,1 +1,1 @@
-# Testing
+This is a basic Idle game that is worthless currently
