@@ -20,19 +20,21 @@ class App(QMainWindow):
         self.clickingPower = 1
         self.autoClickers = 0
         self.autoAutoClickers = 0
+        self.clicksPerSecond = 0
 
-        # Initializ the prices
+        # Initialize the prices
         self.curPrice = 10 + (self.autoClickers * 5)
         self.curPrice2 = 20 + (self.autoClickers * 10)
-        self.curPrice3 = 50 * (self.clickingPower * 20)
+        self.curPrice3 = 50 * (self.clickingPower ** 2)
 
         # Initialize the timer
         self.timer = QTimer()
 
         # Initialize the Labels
-        self.label1 = QLabel('You have clicked ' + str(self.counter) + ' times.', self)
-        self.label2 = QLabel('You have ' + str(self.autoClickers) + ' Auto Clickers', self)
-        self.label3 = QLabel('You have ' + str(self.autoAutoClickers) + ' Auto Auto Clickers', self)
+        self.clicksLabel = QLabel('You have clicked ' + str(self.counter) + ' times.', self)
+        self.autoClicksLabel = QLabel('You have ' + str(self.autoClickers) + ' AutoClickers', self)
+        self.autoAutoClicksLabel = QLabel('You have ' + str(self.autoAutoClickers) + ' AutoAutoClickers', self)
+        self.clicksPerSecondLabel = QLabel('CPS: ' + str(self.clicksPerSecond), self)
 
         # Initialize Buttons
         self.mainButton = QPushButton('Clicking Power: ', self)
@@ -67,17 +69,21 @@ class App(QMainWindow):
         self.clickingPowerButton.adjustSize()
         self.clickingPowerButton.clicked.connect(self.upgrade_clicking)
 
+        # Label showing clicks per second
+        self.clicksPerSecondLabel.move(350, 50)
+        self.clicksPerSecondLabel.adjustSize()
+
         # Label showing clicks
-        self.label1.move(200, 50)
-        self.label1.adjustSize()
+        self.clicksLabel.move(200, 50)
+        self.clicksLabel.adjustSize()
 
         # Label showing auto clickers
-        self.label2.move(200, 100)
-        self.label2.adjustSize()
+        self.autoClicksLabel.move(200, 100)
+        self.autoClicksLabel.adjustSize()
 
         # Label showing auto auto clickers
-        self.label3.move(200, 150)
-        self.label3.adjustSize()
+        self.autoAutoClicksLabel.move(200, 150)
+        self.autoAutoClicksLabel.adjustSize()
 
         # Label showing Clicker Button
         self.mainButton.setText('Clicking Power: ' + str(self.clickingPower))
@@ -88,7 +94,7 @@ class App(QMainWindow):
         self.autoClickerButton.adjustSize()
 
         # Label showing Buying Autoclicker Button
-        self.autoAutoClickerButton.setText('AutoAutoClickers: ' + str(self.curPrice2) + ' Auto Clickers required')
+        self.autoAutoClickerButton.setText('AutoAutoClickers: ' + str(self.curPrice2) + ' AutoClickers required')
         self.autoAutoClickerButton.adjustSize()
 
         # Label showing Clicker Upgrade Button
@@ -120,7 +126,8 @@ class App(QMainWindow):
         if self.curPrice2 <= self.autoClickers:
             self.autoAutoClickers += 1
             self.autoClickers -= self.curPrice2
-		
+            self.counter = 0
+
             self.update_labels()
 
     @pyqtSlot()
@@ -134,22 +141,26 @@ class App(QMainWindow):
     def increment_clicks(self):
         self.counter += (1 * self.autoClickers)
         self.autoClickers += (1 * self.autoAutoClickers)
+        self.clicksPerSecond = self.autoClickers
         self.update_labels()
 
     def update_labels(self):
-        # Update Label 1
-        self.label1.setText('You have clicked ' + str(self.counter) + ' times.')
-        self.label1.adjustSize()
+        # Update clicks label
+        self.clicksLabel.setText('You have clicked ' + str(self.counter) + ' times.')
+        self.clicksLabel.adjustSize()
 
-        # Update Label 2
-        self.label2.setText('You have ' + str(self.autoClickers) + ' Auto Clickers')
-        self.label2.adjustSize()
+        # Update auto clicks label
+        self.autoClicksLabel.setText('You have ' + str(self.autoClickers) + ' AutoClickers')
+        self.autoClicksLabel.adjustSize()
 
-        # Update Label 3
-        self.label3.setText('You have ' + str(self.autoAutoClickers) + ' Auto Auto Clickers')
-        self.label3.adjustSize()
+        # Update auto auto clicks label
+        self.autoAutoClicksLabel.setText('You have ' + str(self.autoAutoClickers) + ' Auto AutoClickers')
+        self.autoAutoClicksLabel.adjustSize()
 
-        'Clicking Power: ' + str(self.clickingPower)
+        # Update clicks per second label
+        self.clicksPerSecondLabel.setText('CPS: ' + str(self.clicksPerSecond))
+        self.clicksPerSecondLabel.adjustSize()
+
         # Update AutoClicker Button
         self.mainButton.setText('Clicking Power: ' + str(self.clickingPower))
         self.mainButton.adjustSize()
@@ -159,7 +170,7 @@ class App(QMainWindow):
         self.autoClickerButton.adjustSize()
 
         # Update AutoAutoClicker Button
-        self.autoAutoClickerButton.setText('AutoAutoClickers: ' + str(self.curPrice2) + ' Auto Clickers required')
+        self.autoAutoClickerButton.setText('AutoAutoClickers: ' + str(self.curPrice2) + ' AutoClickers required')
         self.autoAutoClickerButton.adjustSize()
 
         # Update Clicking Power Button
@@ -169,7 +180,7 @@ class App(QMainWindow):
         # Update Prices
         self.curPrice = 10 + (self.autoClickers * 5)
         self.curPrice2 = 20 + (self.autoAutoClickers * 10)
-        self.curPrice3 = 50 * (self.clickingPower * 20)
+        self.curPrice3 = 50 * (self.clickingPower ** 2)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
