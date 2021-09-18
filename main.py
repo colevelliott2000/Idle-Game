@@ -18,14 +18,16 @@ class App(QMainWindow):
         self.height = 800
         self.counter = 0
         self.clickingPower = 1
+        self.autoClickingPower = 1
         self.autoClickers = 0
         self.autoAutoClickers = 0
         self.clicksPerSecond = 0
 
         # Initialize the prices
         self.curPrice = 10 + (self.autoClickers * 5)
-        self.curPrice2 = 20 + (self.autoClickers * 10)
+        self.curPrice2 = 20 + (self.autoAutoClickers * 10)
         self.curPrice3 = 50 * (self.clickingPower ** 2)
+        self.curPrice4 = 100 * (self.autoClickingPower ** 2)
 
         # Initialize the timer
         self.timer = QTimer()
@@ -37,10 +39,11 @@ class App(QMainWindow):
         self.clicksPerSecondLabel = QLabel('CPS: ' + str(self.clicksPerSecond), self)
 
         # Initialize Buttons
-        self.mainButton = QPushButton('Clicking Power: ', self)
-        self.autoClickerButton = QPushButton('AutoClickers', self)
-        self.autoAutoClickerButton = QPushButton('AutoAutoClickers', self)
-        self.clickingPowerButton = QPushButton('Upgrade clicking power', self)
+        self.mainButton = QPushButton(self)
+        self.autoClickerButton = QPushButton(self)
+        self.autoAutoClickerButton = QPushButton(self)
+        self.clickingPowerButton = QPushButton(self)
+        self.autoClickingPowerButton = QPushButton(self)
         
         # Initialize the UI
         self.initUI()
@@ -68,6 +71,11 @@ class App(QMainWindow):
         self.clickingPowerButton.move(300, 200)
         self.clickingPowerButton.adjustSize()
         self.clickingPowerButton.clicked.connect(self.upgrade_clicking)
+
+        # The button to buy autoClicking power upgrade
+        self.autoClickingPowerButton.move(375, 250)
+        self.autoClickingPowerButton.adjustSize()
+        self.autoClickingPowerButton.clicked.connect(self.upgrade_auto_clicking)
 
         # Label showing clicks per second
         self.clicksPerSecondLabel.move(350, 50)
@@ -100,6 +108,10 @@ class App(QMainWindow):
         # Label showing Clicker Upgrade Button
         self.clickingPowerButton.setText('Upgrade clicking power: ' + str(self.curPrice3) + ' clicks required')
         self.clickingPowerButton.adjustSize()
+
+        # Label showing Autoclicker Upgrade Button
+        self.autoClickingPowerButton.setText('Upgrade auto clicking power: ' + str(self.curPrice4) + ' clicks required')
+        self.autoClickingPowerButton.adjustSize()
 
         # Timer setup
         self.timer.timeout.connect(self.increment_clicks)
@@ -138,6 +150,13 @@ class App(QMainWindow):
 
             self.update_labels()
 
+    @pyqtSlot()
+    def upgrade_auto_clicking(self):
+        if self.curPrice4 <= self.counter:
+            self.autoClickingPower += 1
+            self.counter -= self.curPrice4
+            self.update_labels()
+
     def increment_clicks(self):
         self.counter += (1 * self.autoClickers)
         self.autoClickers += (1 * self.autoAutoClickers)
@@ -154,11 +173,11 @@ class App(QMainWindow):
         self.autoClicksLabel.adjustSize()
 
         # Update auto auto clicks label
-        self.autoAutoClicksLabel.setText('You have ' + str(self.autoAutoClickers) + ' Auto AutoClickers')
+        self.autoAutoClicksLabel.setText('You have ' + str(self.autoAutoClickers) + ' AutoAutoClickers')
         self.autoAutoClicksLabel.adjustSize()
 
         # Update clicks per second label
-        self.clicksPerSecondLabel.setText('CPS: ' + str(self.clicksPerSecond))
+        self.clicksPerSecondLabel.setText('CPS: ' + str(self.clicksPerSecond * self.autoClickingPower))
         self.clicksPerSecondLabel.adjustSize()
 
         # Update AutoClicker Button
@@ -177,10 +196,16 @@ class App(QMainWindow):
         self.clickingPowerButton.setText('Upgrade clicking power: ' + str(self.curPrice3) + ' clicks required')
         self.clickingPowerButton.adjustSize()
 
+        # Update AutoClicking Power Button
+        self.autoClickingPowerButton.setText('Upgrade auto clicking power: ' + str(self.curPrice4) + ' clicks required')
+        self.autoClickingPowerButton.adjustSize()
+
         # Update Prices
         self.curPrice = 10 + (self.autoClickers * 5)
         self.curPrice2 = 20 + (self.autoAutoClickers * 10)
         self.curPrice3 = 50 * (self.clickingPower ** 2)
+        self.curPrice4 = 100 * (self.autoClickingPower ** 3)
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
